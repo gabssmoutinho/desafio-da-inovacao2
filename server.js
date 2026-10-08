@@ -283,6 +283,37 @@ io.on("connection", (socket) => {
         jogadores: sala.jogadores
       }
     );
+        const jogadoresRespondendo =
+      sala.jogadores.filter((j) => !j.host);
+
+    const todosResponderam =
+      jogadoresRespondendo.length > 0 &&
+      jogadoresRespondendo.every((j) =>
+        sala.respostas.has(j.id)
+      );
+
+    if (todosResponderam) {
+
+      if (sala.perguntaAtual < perguntas.length - 1) {
+
+        sala.perguntaAtual++;
+        sala.inicioPergunta = Date.now();
+        sala.tempoPergunta =
+          perguntas[sala.perguntaAtual].tempo || 15;
+        sala.respostas = new Map();
+
+        io.to(codigo).emit(
+          "nova-pergunta",
+          {
+            pergunta: sala.perguntaAtual + 1,
+            dados: perguntas[sala.perguntaAtual],
+            tempo: sala.tempoPergunta
+          }
+        );
+
+      }
+
+    }
   });
 
 
