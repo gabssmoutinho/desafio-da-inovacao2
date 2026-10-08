@@ -477,6 +477,32 @@
 
   socket.on("resultado-resposta", (dados) => {
 
+    socket.on("nova-pergunta", (dados) => {
+
+  document.querySelector("#jogo h1").textContent =
+    "🎯 Pergunta " + dados.pergunta;
+
+  document.getElementById("pergunta").textContent =
+    dados.dados.pergunta;
+
+  const botoes =
+    document.querySelectorAll(".alternativa");
+
+  dados.dados.alternativas.forEach((texto, indice) => {
+
+    botoes[indice].textContent =
+      String.fromCharCode(65 + indice) + ") " + texto;
+
+    botoes[indice].disabled = false;
+    botoes[indice].style.opacity = "1";
+
+  });
+
+  document.getElementById("mensagem").textContent = "";
+
+  iniciarTimer(dados.tempo);
+
+});
   const mensagem = document.getElementById("mensagem");
 
   if (dados.acertou) {
