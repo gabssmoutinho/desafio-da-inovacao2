@@ -431,24 +431,26 @@
 
   function responder(opcao) {
 
-    clearInterval(intervalo);
+  clearInterval(intervalo);
 
-    const mensagem =
-      document.getElementById("mensagem");
+  bloquearAlternativas();
 
-    if (opcao === 0) {
+  document
+    .querySelectorAll(".alternativa")
+    .forEach((botao, indice) => {
 
-      mensagem.textContent =
-        "✅ Resposta selecionada!";
+      if (indice === opcao) {
+        botao.style.opacity = "1";
+      } else {
+        botao.style.opacity = "0.5";
+      }
 
-    } else {
+    });
 
-      mensagem.textContent =
-        "❌ Resposta selecionada!";
-
-    }
-
-    bloquearAlternativas();
+  socket.emit("responder-pergunta", {
+    codigo: codigoSala,
+    resposta: opcao
+  });
   }
 
 
