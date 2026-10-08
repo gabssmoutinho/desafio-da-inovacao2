@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Desafio da Inovação</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #17143d, #312e81);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 70px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 34px;
+      margin: 0;
+    }
+
+    .subtitle {
+      opacity: 0.8;
+      margin: 10px 0 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+    }
+
+    button {
+      width: 100%;
+      min-height: 55px;
+      border: 0;
+      border-radius: 14px;
+      margin-top: 12px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .criar {
+      background: #22c55e;
+      color: white;
+    }
+
+    .entrar {
+      background: #ffffff;
+      color: #17143d;
+    }
+
+    .tela {
+      display: none;
+    }
+
+    .tela.ativa {
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 17px;
+      margin-top: 10px;
+    }
+
+    .voltar {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    .codigo {
+      font-size: 42px;
+      font-weight: bold;
+      letter-spacing: 8px;
+      margin: 20px 0;
+    }
+
+    .jogadores {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .jogador {
+      background: rgba(255,255,255,0.1);
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- TELA INICIAL -->
+    <section id="inicio" class="tela ativa">
+
+      <div class="logo">💡</div>
+
+      <h1>Desafio da Inovação</h1>
+
+      <p class="subtitle">
+        Um desafio multiplayer de conhecimento
+      </p>
+
+      <div class="card">
+
+        <button class="criar" id="btnCriar">
+          🎮 CRIAR PARTIDA
+        </button>
+
+        <button class="entrar" id="btnEntrar">
+          🚪 ENTRAR NA PARTIDA
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- TELA CRIAR -->
+    <section id="criar" class="tela">
+
+      <div class="card">
+
+        <h2>🎮 Criar partida</h2>
+
+        <p>
+          Digite o nome do professor ou apresentador.
+        </p>
+
+        <input
+          id="nomeProfessor"
+          type="text"
+          maxlength="20"
+          placeholder="Seu nome"
+        >
+
+        <button class="criar" id="confirmarCriacao">
+          CRIAR PARTIDA
+        </button>
+
+        <button class="voltar" id="voltarInicio1">
+          VOLTAR
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- TELA ENTRAR -->
+    <section id="entrar" class="tela">
+
+      <div class="card">
+
+        <h2>🚪 Entrar na partida</h2>
+
+        <input
+          id="codigo"
+          type="text"
+          maxlength="6"
+          placeholder="Código da partida"
+        >
+
+        <input
+          id="nomeJogador"
+          type="text"
+          maxlength="20"
+          placeholder="Seu nome"
+        >
+
+        <button class="entrar" id="confirmarEntrada">
+          ENTRAR
+        </button>
+
+        <button class="voltar" id="voltarInicio2">
+          VOLTAR
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- SALA DE ESPERA -->
+    <section id="sala" class="tela">
+
+      <div class="card">
+
+        <h2>🎮 Sala de espera</h2>
+
+        <p>Compartilhe este código:</p>
+
+        <div class="codigo" id="codigoSala">
+          ------
+        </div>
+
+        <p>
+          Aguardando os jogadores...
+        </p>
+
+        <div class="jogadores" id="listaJogadores"></div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+
+  <script src="/socket.io/socket.io.js"></script>
+
+  <script>
+    const socket = io();
+
+    const telas = document.querySelectorAll(".tela");
+
+    function mostrarTela(id) {
+      telas.forEach((tela) => {
+        tela.classList.remove("ativa");
+      });
+
+      document.getElementById(id).classList.add("ativa");
+    }
+
+    document
+      .getElementById("btnCriar")
+      .addEventListener("click", () => {
+        mostrarTela("criar");
+      });
+
+    document
+      .getElementById("btnEntrar")
+      .addEventListener("click", () => {
+        mostrarTela("entrar");
+      });
+
+    document
+      .getElementById("voltarInicio1")
+      .addEventListener("click", () => {
+        mostrarTela("inicio");
+      });
+
+    document
+      .getElementById("voltarInicio2")
+      .addEventListener("click", () => {
+        mostrarTela("inicio");
+      });
+
+
+    document
+      .getElementById("confirmarCriacao")
+      .addEventListener("click", () => {
+
+        const nome =
+          document
+            .getElementById("nomeProfessor")
+            .value
+            .trim();
+
+        if (!nome) {
+          alert("Digite seu nome.");
+          return;
+        }
+
+        socket.emit("criar-partida", {
+          nome
+        });
+      });
+
+
+    document
+      .getElementById("confirmarEntrada")
+      .addEventListener("click", () => {
+
+        const codigo =
+          document
+            .getElementById("codigo")
+            .value
+            .trim()
+            .toUpperCase();
+
+        const nome =
+          document
+            .getElementById("nomeJogador")
+            .value
+            .trim();
+
+        if (!codigo || codigo.length !== 6) {
+          alert("Digite um código de 6 caracteres.");
+          return;
+        }
+
+        if (!nome) {
+          alert("Digite seu nome.");
+          return;
+        }
+
+        socket.emit("entrar-partida", {
+          codigo,
+          nome
+        });
+      });
+
+
+    socket.on("partida-criada", (dados) => {
+
+      document.getElementById("codigoSala").textContent =
+        dados.codigo;
+
+      atualizarJogadores(dados.jogadores);
+
+      mostrarTela("sala");
+    });
+
+
+    socket.on("entrou-partida", (dados) => {
+
+      document.getElementById("codigoSala").textContent =
+        dados.codigo;
+
+      atualizarJogadores(dados.jogadores);
+
+      mostrarTela("sala");
+    });
+
+
+    socket.on("jogadores-atualizados", (dados) => {
+      atualizarJogadores(dados.jogadores);
+    });
+
+
+    socket.on("erro-partida", (mensagem) => {
+      alert(mensagem);
+    });
+
+
+    function atualizarJogadores(jogadores) {
+
+      const lista =
+        document.getElementById("listaJogadores");
+
+      lista.innerHTML = "";
+
+      jogadores.forEach((jogador) => {
+
+        const div = document.createElement("div");
+
+        div.className = "jogador";
+
+        div.textContent =
+          (jogador.host ? "👑 " : "👤 ") +
+          jogador.nome;
+
+        lista.appendChild(div);
+      });
+    }
+  </script>
+
+</body>
+</html>
