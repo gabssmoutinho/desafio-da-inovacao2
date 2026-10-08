@@ -8,13 +8,10 @@ const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
-// Permite que o servidor entregue os arquivos do jogo
 app.use(express.static("public"));
 
-// Salas atualmente abertas
 const rooms = new Map();
 
-// Gera um código de 6 caracteres
 function gerarCodigo() {
   const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -33,12 +30,13 @@ function gerarCodigo() {
   return codigo;
 }
 
-// Conexão de um jogador
 io.on("connection", (socket) => {
+
   console.log("Jogador conectado:", socket.id);
 
-  // Criar uma partida
+  // CRIAR PARTIDA
   socket.on("criar-partida", ({ nome }) => {
+
     const codigo = gerarCodigo();
 
     const jogador = {
@@ -66,19 +64,27 @@ io.on("connection", (socket) => {
     console.log(`Partida criada: ${codigo}`);
   });
 
-  // Entrar em uma partida
+
+  // ENTRAR NA PARTIDA
   socket.on("entrar-partida", ({ codigo, nome }) => {
+
     codigo = String(codigo || "").trim().toUpperCase();
 
     const sala = rooms.get(codigo);
 
     if (!sala) {
-      socket.emit("erro-partida", "Partida não encontrada.");
+      socket.emit(
+        "erro-partida",
+        "Partida não encontrada."
+      );
       return;
     }
 
     if (sala.status !== "aguardando") {
-      socket.emit("erro-partida", "Essa partida já começou.");
+      socket.emit(
+        "erro-partida",
+        "Essa partida já começou."
+      );
       return;
     }
 
@@ -93,43 +99,104 @@ io.on("connection", (socket) => {
 
     socket.join(codigo);
 
-    io.to(codigo).emit("jogadores-atualizados", {
-      jogadores: sala.jogadores
-    });
+    io.to(codigo).emit(
+      "jogadores-atualizados",
+      {
+        jogadores: sala.jogadores
+      }
+    );
 
-    socket.emit("entrou-partida", {
-      codigo,
-      jogadores: sala.jogadores
-    });
+    socket.emit(
+      "entrou-partida",
+      {
+        codigo,
+        jogadores: sala.jogadores
+      }
+    );
 
-    console.log(`${jogador.nome} entrou na partida ${codigo}`);
+    console.log(
+      `${jogador.nome} entrou na partida ${codigo}`
+    );
   });
 
-  // Desconexão
+
+  // INICIAR PARTIDA
+  socket.on("iniciar-partida", ({ codigo }) => {
+
+    const sala = rooms.get(codigo);
+
+    if (!sala) {
+      socket.emit(
+        "erro-partida",
+        "Partida não encontrada."
+      );
+      return;
+    }
+
+    // Apenas o professor pode iniciar
+    if (sala.hostId !== socket.id) {
+      socket.emit(
+        "erro-partida",
+        "Apenas o professor pode iniciar a partida."
+      );
+      return;
+    }
+
+    sala.status = "jogando";
+    sala.perguntaAtual = 1;
+
+    io.to(codigo).emit(
+      "partida-iniciada",
+      {
+        pergunta: sala.perguntaAtual
+      }
+    );
+
+    console.log(
+      `Partida ${codigo} iniciada`
+    );
+  });
+
+
+  // DESCONEXÃO
   socket.on("disconnect", () => {
-    console.log("Jogador desconectado:", socket.id);
+
+    console.log(
+      "Jogador desconectado:",
+      socket.id
+    );
 
     for (const [codigo, sala] of rooms.entries()) {
+
       const jogador = sala.jogadores.find(
         (j) => j.id === socket.id
       );
 
-      if (jogador) {
-        sala.jogadores = sala.jogadores.filter(
+      if (!jogador) continue;
+
+      sala.jogadores =
+        sala.jogadores.filter(
           (j) => j.id !== socket.id
         );
 
-        io.to(codigo).emit("jogadores-atualizados", {
+      io.to(codigo).emit(
+        "jogadores-atualizados",
+        {
           jogadores: sala.jogadores
-        });
+        }
+      );
 
-        break;
-      }
+      break;
     }
   });
+
 });
 
-// Inicia o servidor
+
 server.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+
+  console.log(
+    `Servidor rodando na porta ${PORT}`
+  );
+
 });
