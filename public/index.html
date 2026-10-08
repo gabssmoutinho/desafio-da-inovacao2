@@ -398,9 +398,9 @@
   });
 
 
-  function iniciarTimer() {
+  function iniciarTimer(tempoInicial) {
 
-    tempo = 15;
+    tempo = tempoInicial || 15;
 
     document.getElementById("timer").textContent =
       tempo;
