@@ -12,6 +12,19 @@ app.use(express.static("public"));
 
 const rooms = new Map();
 
+const perguntas = [
+  {
+    pergunta: "O que é inovação?",
+    alternativas: [
+      "Criar ou melhorar algo de forma útil",
+      "Fazer sempre exatamente a mesma coisa",
+      "Evitar qualquer mudança",
+      "Copiar tudo sem modificar"
+    ],
+    correta: 0
+  }
+];
+
 function gerarCodigo() {
   const caracteres = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -34,6 +47,7 @@ io.on("connection", (socket) => {
 
   console.log("Jogador conectado:", socket.id);
 
+
   // CRIAR PARTIDA
   socket.on("criar-partida", ({ nome }) => {
 
@@ -51,7 +65,9 @@ io.on("connection", (socket) => {
       hostId: socket.id,
       jogadores: [jogador],
       status: "aguardando",
-      perguntaAtual: 0
+      perguntaAtual: 0,
+      inicioPergunta: null,
+      respostas: new Map()
     });
 
     socket.join(codigo);
@@ -61,12 +77,7 @@ io.on("connection", (socket) => {
       jogadores: [jogador]
     });
 
-    console.log(
-      "Partida criada:",
-      codigo,
-      "Professor:",
-      socket.id
-    );
+    console.log("Partida criada:", codigo);
   });
 
 
@@ -142,28 +153,18 @@ io.on("connection", (socket) => {
       return;
     }
 
-    console.log(
-      "Tentativa de iniciar:",
-      codigo,
-      "Socket atual:",
-      socket.id,
-      "Professor da sala:",
-      sala.hostId
-    );
-
-    // Verifica se é realmente o professor
     if (sala.hostId !== socket.id) {
-
       socket.emit(
         "erro-partida",
         "Apenas o professor pode iniciar a partida."
       );
-
       return;
     }
 
     sala.status = "jogando";
-    sala.perguntaAtual = 1;
+    sala.perguntaAtual = 0;
+    sala.inicioPergunta = Date.now();
+    sala.respostas = new Map();
 
     io.to(codigo).emit(
       "partida-iniciada",
@@ -173,8 +174,99 @@ io.on("connection", (socket) => {
     );
 
     console.log(
-      "PARTIDA INICIADA:",
+      "Partida iniciada:",
       codigo
+    );
+  });
+
+
+  // RESPONDER PERGUNTA
+  socket.on("responder-pergunta", ({ codigo, resposta }) => {
+
+    codigo = String(codigo || "").trim().toUpperCase();
+
+    const sala = rooms.get(codigo);
+
+    if (!sala) {
+      socket.emit(
+        "erro-partida",
+        "Partida não encontrada."
+      );
+      return;
+    }
+
+    if (sala.status !== "jogando") {
+      return;
+    }
+
+    // Impede responder duas vezes
+    if (sala.respostas.has(socket.id)) {
+      return;
+    }
+
+    const jogador = sala.jogadores.find(
+      (j) => j.id === socket.id
+    );
+
+    if (!jogador) {
+      return;
+    }
+
+    const pergunta = perguntas[sala.perguntaAtual];
+
+    const respostaEscolhida = Number(resposta);
+
+    const acertou =
+      respostaEscolhida === pergunta.correta;
+
+    // Calcula o tempo utilizado
+    const tempo =
+      (Date.now() - sala.inicioPergunta) / 1000;
+
+    let pontos = 0;
+
+    if (acertou) {
+
+      // Quanto mais rápido, maior a pontuação
+      pontos = Math.max(
+        500,
+        Math.round(1000 - tempo * 40)
+      );
+
+      jogador.pontos += pontos;
+    }
+
+    sala.respostas.set(socket.id, {
+      resposta: respostaEscolhida,
+      acertou: acertou,
+      pontos: pontos
+    });
+
+    socket.emit(
+      "resultado-resposta",
+      {
+        acertou: acertou,
+        pontos: pontos,
+        total: jogador.pontos
+      }
+    );
+
+    console.log(
+      jogador.nome,
+      "respondeu:",
+      respostaEscolhida,
+      "Acertou:",
+      acertou,
+      "Pontos:",
+      pontos
+    );
+
+    // Envia a pontuação atualizada para todos
+    io.to(codigo).emit(
+      "pontuacao-atualizada",
+      {
+        jogadores: sala.jogadores
+      }
     );
   });
 
@@ -211,11 +303,6 @@ io.on("connection", (socket) => {
         );
 
         rooms.delete(codigo);
-
-        console.log(
-          "Sala encerrada:",
-          codigo
-        );
 
         break;
       }
