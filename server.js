@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
     };
 
     rooms.set(codigo, {
-      codigo,
+      codigo: codigo,
       hostId: socket.id,
       jogadores: [jogador],
       status: "aguardando",
@@ -57,11 +57,16 @@ io.on("connection", (socket) => {
     socket.join(codigo);
 
     socket.emit("partida-criada", {
-      codigo,
+      codigo: codigo,
       jogadores: [jogador]
     });
 
-    console.log(`Partida criada: ${codigo}`);
+    console.log(
+      "Partida criada:",
+      codigo,
+      "Professor:",
+      socket.id
+    );
   });
 
 
@@ -109,19 +114,23 @@ io.on("connection", (socket) => {
     socket.emit(
       "entrou-partida",
       {
-        codigo,
+        codigo: codigo,
         jogadores: sala.jogadores
       }
     );
 
     console.log(
-      `${jogador.nome} entrou na partida ${codigo}`
+      jogador.nome,
+      "entrou na partida",
+      codigo
     );
   });
 
 
   // INICIAR PARTIDA
   socket.on("iniciar-partida", ({ codigo }) => {
+
+    codigo = String(codigo || "").trim().toUpperCase();
 
     const sala = rooms.get(codigo);
 
@@ -133,12 +142,23 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // Apenas o professor pode iniciar
+    console.log(
+      "Tentativa de iniciar:",
+      codigo,
+      "Socket atual:",
+      socket.id,
+      "Professor da sala:",
+      sala.hostId
+    );
+
+    // Verifica se é realmente o professor
     if (sala.hostId !== socket.id) {
+
       socket.emit(
         "erro-partida",
         "Apenas o professor pode iniciar a partida."
       );
+
       return;
     }
 
@@ -148,12 +168,13 @@ io.on("connection", (socket) => {
     io.to(codigo).emit(
       "partida-iniciada",
       {
-        pergunta: sala.perguntaAtual
+        pergunta: 1
       }
     );
 
     console.log(
-      `Partida ${codigo} iniciada`
+      "PARTIDA INICIADA:",
+      codigo
     );
   });
 
@@ -172,12 +193,32 @@ io.on("connection", (socket) => {
         (j) => j.id === socket.id
       );
 
-      if (!jogador) continue;
+      if (!jogador) {
+        continue;
+      }
 
       sala.jogadores =
         sala.jogadores.filter(
           (j) => j.id !== socket.id
         );
+
+      // Se o professor sair, encerra a sala
+      if (sala.hostId === socket.id) {
+
+        io.to(codigo).emit(
+          "erro-partida",
+          "O professor saiu da partida."
+        );
+
+        rooms.delete(codigo);
+
+        console.log(
+          "Sala encerrada:",
+          codigo
+        );
+
+        break;
+      }
 
       io.to(codigo).emit(
         "jogadores-atualizados",
@@ -196,7 +237,8 @@ io.on("connection", (socket) => {
 server.listen(PORT, () => {
 
   console.log(
-    `Servidor rodando na porta ${PORT}`
+    "Servidor rodando na porta",
+    PORT
   );
 
 });
