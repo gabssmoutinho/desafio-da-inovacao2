@@ -485,8 +485,12 @@
   document.getElementById("pergunta").textContent =
     dados.dados.pergunta;
 
-  const botoes =
+    const botoes =
     document.querySelectorAll(".alternativa");
+
+  botoes.forEach((botao) => {
+    botao.style.display = "none";
+  });
 
   dados.dados.alternativas.forEach((texto, indice) => {
 
@@ -495,6 +499,7 @@
 
     botoes[indice].disabled = false;
     botoes[indice].style.opacity = "1";
+    botoes[indice].style.display = "block";
 
   });
 
