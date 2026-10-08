@@ -475,6 +475,20 @@
 
   });
 
+  socket.on("resultado-resposta", (dados) => {
+
+  const mensagem = document.getElementById("mensagem");
+
+  if (dados.acertou) {
+    mensagem.textContent =
+      "✅ Acertou! +" + dados.pontos + " pontos";
+  } else {
+    mensagem.textContent =
+      "❌ Errou!";
+  }
+
+});
+
 </script>
 
 </body>
