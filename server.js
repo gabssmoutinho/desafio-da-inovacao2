@@ -21,8 +21,21 @@ const perguntas = [
       "Evitar qualquer mudança",
       "Copiar tudo sem modificar"
     ],
-    correta: 0
+        correta: 0
+  },
+
+  {
+    pergunta: "Uma empresa percebe que seu produto tem boas vendas, mas está perdendo clientes para concorrentes que oferecem soluções digitais. Antes de simplesmente criar um aplicativo, a equipe decide investigar os hábitos dos clientes, identificar quais problemas ainda não são atendidos e testar pequenas soluções com um grupo de usuários. Qual conceito melhor representa essa abordagem?",
+    alternativas: [
+      "Inovação baseada em cópia, pois a empresa deve reproduzir as soluções digitais dos concorrentes.",
+      "Inovação orientada por evidências, utilizando pesquisa, experimentação e feedback dos usuários para desenvolver uma solução.",
+      "Inovação incremental, pois qualquer alteração em um produto pode ser considerada inovação incremental.",
+      "Resistência à mudança, pois a empresa está evitando lançar imediatamente uma nova tecnologia."
+    ],
+    correta: 1,
+    tempo: 30
   }
+    
 ];
 
 function gerarCodigo() {
@@ -164,12 +177,14 @@ io.on("connection", (socket) => {
     sala.status = "jogando";
     sala.perguntaAtual = 0;
     sala.inicioPergunta = Date.now();
+    sala.tempoPergunta = perguntas[sala.perguntaAtual].tempo || 15;
     sala.respostas = new Map();
 
     io.to(codigo).emit(
       "partida-iniciada",
       {
-        pergunta: 1
+  pergunta: 1,
+  tempo: sala.tempoPergunta
       }
     );
 
