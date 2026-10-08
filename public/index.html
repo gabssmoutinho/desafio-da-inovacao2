@@ -1,395 +1,714 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
-  <meta charset="UTF-8">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+<meta charset="UTF-8">
 
-  <title>Desafio da Inovação</title>
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<title>Desafio da Inovação</title>
 
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #17143d, #312e81);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+<style>
 
-    .container {
-      width: 100%;
-      max-width: 500px;
-      text-align: center;
-    }
+* {
+  box-sizing: border-box;
+}
 
-    .logo {
-      font-size: 70px;
-      margin-bottom: 10px;
-    }
+body {
 
-    h1 {
-      font-size: 34px;
-      margin: 0;
-    }
+  margin: 0;
 
-    .subtitle {
-      opacity: 0.8;
-      margin: 10px 0 30px;
-    }
+  min-height: 100vh;
 
-    .card {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 24px;
-      padding: 25px;
-      backdrop-filter: blur(10px);
-    }
+  font-family: Arial, sans-serif;
 
-    button {
-      width: 100%;
-      min-height: 55px;
-      border: 0;
-      border-radius: 14px;
-      margin-top: 12px;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+  background:
+    linear-gradient(
+      135deg,
+      #17143d,
+      #312e81
+    );
 
-    .criar {
-      background: #22c55e;
-      color: white;
-    }
+  color: white;
 
-    .entrar {
-      background: #ffffff;
-      color: #17143d;
-    }
+  display: flex;
 
-    .tela {
-      display: none;
-    }
+  align-items: center;
 
-    .tela.ativa {
-      display: block;
-    }
+  justify-content: center;
 
-    input {
-      width: 100%;
-      min-height: 52px;
-      border: 0;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 17px;
-      margin-top: 10px;
-    }
+  padding: 20px;
+}
 
-    .voltar {
-      background: transparent;
-      color: white;
-      border: 1px solid rgba(255,255,255,0.4);
-    }
+.container {
 
-    .codigo {
-      font-size: 42px;
-      font-weight: bold;
-      letter-spacing: 8px;
-      margin: 20px 0;
-    }
+  width: 100%;
 
-    .jogadores {
-      margin-top: 20px;
-      text-align: left;
-    }
+  max-width: 500px;
 
-    .jogador {
-      background: rgba(255,255,255,0.1);
-      padding: 12px;
-      border-radius: 10px;
-      margin-top: 8px;
-    }
-  </style>
+  text-align: center;
+}
+
+.logo {
+
+  font-size: 70px;
+
+  margin-bottom: 10px;
+}
+
+h1 {
+
+  font-size: 34px;
+
+  margin: 0;
+}
+
+.subtitle {
+
+  opacity: 0.8;
+
+  margin:
+    10px
+    0
+    30px;
+}
+
+.card {
+
+  background:
+    rgba(255,255,255,0.1);
+
+  border-radius: 24px;
+
+  padding: 25px;
+
+  backdrop-filter:
+    blur(10px);
+}
+
+button {
+
+  width: 100%;
+
+  min-height: 55px;
+
+  border: 0;
+
+  border-radius: 14px;
+
+  margin-top: 12px;
+
+  font-size: 17px;
+
+  font-weight: bold;
+}
+
+.criar {
+
+  background: #22c55e;
+
+  color: white;
+}
+
+.entrar {
+
+  background: white;
+
+  color: #17143d;
+}
+
+.iniciar {
+
+  background: #f59e0b;
+
+  color: white;
+
+}
+
+.voltar {
+
+  background: transparent;
+
+  color: white;
+
+  border:
+    1px solid
+    rgba(255,255,255,0.4);
+}
+
+.tela {
+
+  display: none;
+}
+
+.tela.ativa {
+
+  display: block;
+}
+
+input {
+
+  width: 100%;
+
+  min-height: 52px;
+
+  border: 0;
+
+  border-radius: 12px;
+
+  padding: 12px;
+
+  font-size: 17px;
+
+  margin-top: 10px;
+}
+
+.codigo {
+
+  font-size: 42px;
+
+  font-weight: bold;
+
+  letter-spacing: 8px;
+
+  margin: 20px 0;
+}
+
+.jogadores {
+
+  margin-top: 20px;
+
+  text-align: left;
+}
+
+.jogador {
+
+  background:
+    rgba(255,255,255,0.1);
+
+  padding: 12px;
+
+  border-radius: 10px;
+
+  margin-top: 8px;
+}
+
+.info {
+
+  opacity: 0.8;
+
+  margin-top: 15px;
+}
+
+</style>
+
 </head>
+
 
 <body>
 
-  <div class="container">
-
-    <!-- TELA INICIAL -->
-    <section id="inicio" class="tela ativa">
-
-      <div class="logo">💡</div>
-
-      <h1>Desafio da Inovação</h1>
-
-      <p class="subtitle">
-        Um desafio multiplayer de conhecimento
-      </p>
-
-      <div class="card">
-
-        <button class="criar" id="btnCriar">
-          🎮 CRIAR PARTIDA
-        </button>
-
-        <button class="entrar" id="btnEntrar">
-          🚪 ENTRAR NA PARTIDA
-        </button>
-
-      </div>
-
-    </section>
+<div class="container">
 
 
-    <!-- TELA CRIAR -->
-    <section id="criar" class="tela">
+<!-- INÍCIO -->
 
-      <div class="card">
+<section
+  id="inicio"
+  class="tela ativa"
+>
 
-        <h2>🎮 Criar partida</h2>
+<div class="logo">
+💡
+</div>
 
-        <p>
-          Digite o nome do professor ou apresentador.
-        </p>
+<h1>
+Desafio da Inovação
+</h1>
 
-        <input
-          id="nomeProfessor"
-          type="text"
-          maxlength="20"
-          placeholder="Seu nome"
-        >
+<p class="subtitle">
+Um desafio multiplayer de conhecimento
+</p>
 
-        <button class="criar" id="confirmarCriacao">
-          CRIAR PARTIDA
-        </button>
+<div class="card">
 
-        <button class="voltar" id="voltarInicio1">
-          VOLTAR
-        </button>
+<button
+  class="criar"
+  id="btnCriar"
+>
+🎮 CRIAR PARTIDA
+</button>
 
-      </div>
+<button
+  class="entrar"
+  id="btnEntrar"
+>
+🚪 ENTRAR NA PARTIDA
+</button>
 
-    </section>
+</div>
 
-
-    <!-- TELA ENTRAR -->
-    <section id="entrar" class="tela">
-
-      <div class="card">
-
-        <h2>🚪 Entrar na partida</h2>
-
-        <input
-          id="codigo"
-          type="text"
-          maxlength="6"
-          placeholder="Código da partida"
-        >
-
-        <input
-          id="nomeJogador"
-          type="text"
-          maxlength="20"
-          placeholder="Seu nome"
-        >
-
-        <button class="entrar" id="confirmarEntrada">
-          ENTRAR
-        </button>
-
-        <button class="voltar" id="voltarInicio2">
-          VOLTAR
-        </button>
-
-      </div>
-
-    </section>
+</section>
 
 
-    <!-- SALA DE ESPERA -->
-    <section id="sala" class="tela">
+<!-- CRIAR -->
 
-      <div class="card">
+<section
+  id="criar"
+  class="tela"
+>
 
-        <h2>🎮 Sala de espera</h2>
+<div class="card">
 
-        <p>Compartilhe este código:</p>
+<h2>
+🎮 Criar partida
+</h2>
 
-        <div class="codigo" id="codigoSala">
-          ------
-        </div>
+<p>
+Digite seu nome:
+</p>
 
-        <p>
-          Aguardando os jogadores...
-        </p>
+<input
+  id="nomeProfessor"
+  maxlength="20"
+  placeholder="Nome do professor"
+/>
 
-        <div class="jogadores" id="listaJogadores"></div>
+<button
+  class="criar"
+  id="confirmarCriacao"
+>
+CRIAR PARTIDA
+</button>
 
-      </div>
+<button
+  class="voltar"
+  id="voltarInicio1"
+>
+VOLTAR
+</button>
 
-    </section>
+</div>
 
-  </div>
+</section>
 
 
-  <script src="/socket.io/socket.io.js"></script>
+<!-- ENTRAR -->
 
-  <script>
-    const socket = io();
+<section
+  id="entrar"
+  class="tela"
+>
 
-    const telas = document.querySelectorAll(".tela");
+<div class="card">
 
-    function mostrarTela(id) {
-      telas.forEach((tela) => {
-        tela.classList.remove("ativa");
-      });
+<h2>
+🚪 Entrar na partida
+</h2>
 
-      document.getElementById(id).classList.add("ativa");
+<input
+  id="codigo"
+  maxlength="6"
+  placeholder="Código da partida"
+/>
+
+<input
+  id="nomeJogador"
+  maxlength="20"
+  placeholder="Seu nome"
+/>
+
+<button
+  class="entrar"
+  id="confirmarEntrada"
+>
+ENTRAR
+</button>
+
+<button
+  class="voltar"
+  id="voltarInicio2"
+>
+VOLTAR
+</button>
+
+</div>
+
+</section>
+
+
+<!-- SALA -->
+
+<section
+  id="sala"
+  class="tela"
+>
+
+<div class="card">
+
+<h2>
+🎮 Sala de espera
+</h2>
+
+<p>
+Código da partida:
+</p>
+
+<div
+  class="codigo"
+  id="codigoSala"
+>
+------
+</div>
+
+<p class="info">
+Compartilhe o código com os jogadores.
+</p>
+
+<div
+  class="jogadores"
+  id="listaJogadores"
+>
+</div>
+
+<button
+  class="iniciar"
+  id="btnIniciar"
+  style="display:none;"
+>
+🚀 INICIAR PARTIDA
+</button>
+
+</div>
+
+</section>
+
+
+<!-- JOGO -->
+
+<section
+  id="jogo"
+  class="tela"
+>
+
+<div class="card">
+
+<h2>
+🚀 A partida começou!
+</h2>
+
+<p>
+Pergunta <strong id="numeroPergunta">
+1
+</strong>
+</p>
+
+<p class="info">
+Em breve colocaremos aqui as perguntas, alternativas, timer e pontuação.
+</p>
+
+</div>
+
+</section>
+
+
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+
+const socket = io();
+
+let codigoAtual = "";
+
+let souProfessor = false;
+
+
+const telas =
+  document.querySelectorAll(".tela");
+
+
+function mostrarTela(id) {
+
+  telas.forEach(
+    tela =>
+      tela.classList.remove("ativa")
+  );
+
+  document
+    .getElementById(id)
+    .classList.add("ativa");
+}
+
+
+document
+  .getElementById("btnCriar")
+  .addEventListener(
+    "click",
+    () => mostrarTela("criar")
+  );
+
+
+document
+  .getElementById("btnEntrar")
+  .addEventListener(
+    "click",
+    () => mostrarTela("entrar")
+  );
+
+
+document
+  .getElementById("voltarInicio1")
+  .addEventListener(
+    "click",
+    () => mostrarTela("inicio")
+  );
+
+
+document
+  .getElementById("voltarInicio2")
+  .addEventListener(
+    "click",
+    () => mostrarTela("inicio")
+  );
+
+
+document
+  .getElementById("confirmarCriacao")
+  .addEventListener(
+    "click",
+    () => {
+
+      const nome =
+        document
+          .getElementById("nomeProfessor")
+          .value
+          .trim();
+
+      if (!nome) {
+
+        alert(
+          "Digite seu nome."
+        );
+
+        return;
+      }
+
+      souProfessor = true;
+
+      socket.emit(
+        "criar-partida",
+        { nome }
+      );
+
     }
-
-    document
-      .getElementById("btnCriar")
-      .addEventListener("click", () => {
-        mostrarTela("criar");
-      });
-
-    document
-      .getElementById("btnEntrar")
-      .addEventListener("click", () => {
-        mostrarTela("entrar");
-      });
-
-    document
-      .getElementById("voltarInicio1")
-      .addEventListener("click", () => {
-        mostrarTela("inicio");
-      });
-
-    document
-      .getElementById("voltarInicio2")
-      .addEventListener("click", () => {
-        mostrarTela("inicio");
-      });
+  );
 
 
-    document
-      .getElementById("confirmarCriacao")
-      .addEventListener("click", () => {
+document
+  .getElementById("confirmarEntrada")
+  .addEventListener(
+    "click",
+    () => {
 
-        const nome =
-          document
-            .getElementById("nomeProfessor")
-            .value
-            .trim();
+      const codigo =
+        document
+          .getElementById("codigo")
+          .value
+          .trim()
+          .toUpperCase();
 
-        if (!nome) {
-          alert("Digite seu nome.");
-          return;
-        }
+      const nome =
+        document
+          .getElementById("nomeJogador")
+          .value
+          .trim();
 
-        socket.emit("criar-partida", {
-          nome
-        });
-      });
+      if (
+        !codigo ||
+        codigo.length !== 6
+      ) {
 
+        alert(
+          "Digite um código de 6 caracteres."
+        );
 
-    document
-      .getElementById("confirmarEntrada")
-      .addEventListener("click", () => {
+        return;
+      }
 
-        const codigo =
-          document
-            .getElementById("codigo")
-            .value
-            .trim()
-            .toUpperCase();
+      if (!nome) {
 
-        const nome =
-          document
-            .getElementById("nomeJogador")
-            .value
-            .trim();
+        alert(
+          "Digite seu nome."
+        );
 
-        if (!codigo || codigo.length !== 6) {
-          alert("Digite um código de 6 caracteres.");
-          return;
-        }
+        return;
+      }
 
-        if (!nome) {
-          alert("Digite seu nome.");
-          return;
-        }
+      souProfessor = false;
 
-        socket.emit("entrar-partida", {
+      socket.emit(
+        "entrar-partida",
+        {
           codigo,
           nome
-        });
-      });
+        }
+      );
 
-
-    socket.on("partida-criada", (dados) => {
-
-      document.getElementById("codigoSala").textContent =
-        dados.codigo;
-
-      atualizarJogadores(dados.jogadores);
-
-      mostrarTela("sala");
-    });
-
-
-    socket.on("entrou-partida", (dados) => {
-
-      document.getElementById("codigoSala").textContent =
-        dados.codigo;
-
-      atualizarJogadores(dados.jogadores);
-
-      mostrarTela("sala");
-    });
-
-
-    socket.on("jogadores-atualizados", (dados) => {
-      atualizarJogadores(dados.jogadores);
-    });
-
-
-    socket.on("erro-partida", (mensagem) => {
-      alert(mensagem);
-    });
-
-
-    function atualizarJogadores(jogadores) {
-
-      const lista =
-        document.getElementById("listaJogadores");
-
-      lista.innerHTML = "";
-
-      jogadores.forEach((jogador) => {
-
-        const div = document.createElement("div");
-
-        div.className = "jogador";
-
-        div.textContent =
-          (jogador.host ? "👑 " : "👤 ") +
-          jogador.nome;
-
-        lista.appendChild(div);
-      });
     }
-  </script>
+  );
+
+
+document
+  .getElementById("btnIniciar")
+  .addEventListener(
+    "click",
+    () => {
+
+      socket.emit(
+        "iniciar-partida",
+        {
+          codigo: codigoAtual
+        }
+      );
+
+    }
+  );
+
+
+socket.on(
+  "partida-criada",
+  dados => {
+
+    codigoAtual =
+      dados.codigo;
+
+    document
+      .getElementById("codigoSala")
+      .textContent =
+        dados.codigo;
+
+    atualizarJogadores(
+      dados.jogadores
+    );
+
+    document
+      .getElementById("btnIniciar")
+      .style.display =
+        "block";
+
+    mostrarTela("sala");
+
+  }
+);
+
+
+socket.on(
+  "entrou-partida",
+  dados => {
+
+    codigoAtual =
+      dados.codigo;
+
+    document
+      .getElementById("codigoSala")
+      .textContent =
+        dados.codigo;
+
+    atualizarJogadores(
+      dados.jogadores
+    );
+
+    mostrarTela("sala");
+
+  }
+);
+
+
+socket.on(
+  "jogadores-atualizados",
+  dados => {
+
+    atualizarJogadores(
+      dados.jogadores
+    );
+
+  }
+);
+
+
+socket.on(
+  "partida-iniciada",
+  dados => {
+
+    document
+      .getElementById("numeroPergunta")
+      .textContent =
+        dados.pergunta;
+
+    mostrarTela("jogo");
+
+  }
+);
+
+
+socket.on(
+  "erro-partida",
+  mensagem => {
+
+    alert(mensagem);
+
+  }
+);
+
+
+function atualizarJogadores(
+  jogadores
+) {
+
+  const lista =
+    document
+      .getElementById(
+        "listaJogadores"
+      );
+
+  lista.innerHTML = "";
+
+  jogadores.forEach(
+    jogador => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "jogador";
+
+      div.textContent =
+        (
+          jogador.host
+            ? "👑 "
+            : "👤 "
+        ) +
+        jogador.nome;
+
+      lista.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+</script>
 
 </body>
+
 </html>
