@@ -34,6 +34,17 @@ const perguntas = [
     ],
     correta: 1,
     tempo: 30
+  },  
+
+  {
+    pergunta: "Uma empresa só pode ser considerada inovadora quando cria uma tecnologia que nunca existiu antes.",
+    alternativas: [
+      "VERDADEIRO",
+      "FALSO"
+    ],
+    correta: 1,
+    tempo: 20,
+    tipo: "verdadeiro-falso"
   }
     
 ];
